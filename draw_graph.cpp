@@ -16,10 +16,11 @@ int main(int argc, char* argv[])
     char title[255];
     
     TApplication app("app", &argc, argv );
-    sprintf(title, "Cs radiation wave (%d ~ %d)", (i+1), wunit);
+    sprintf(title, "Cs radiation wave (%d ~ %d); record time(4ns); input", (i+1), wunit);
     TH1S *th1 = new TH1S("h1", title, wunit, 0, wunit);
     TCanvas c;
 
+    n = 0;
     filename = "0514_cs.txt";
     const char *outf = "graph.jpg";
     ifstream ifs(filename);
@@ -27,11 +28,11 @@ int main(int argc, char* argv[])
     while (getline(ifs, tmp))
     {
         bin = stoi(tmp);
-        th1->AddBinContent(i + 1, bin);
+        th1->SetBinContent(i + 1, bin);
         i ++;
         if (i == wunit)
         {
-            n++;
+            n ++;
 
             th1->Draw();
             c.Update();
@@ -42,23 +43,21 @@ int main(int argc, char* argv[])
             if(func == 1)
             {
                 c.Print(outf);
-                ifs.close();
-                return 0;
+                break;
             }
             if(func == 2)
             {
-                ifs.close();
-                return 0;
+                break;
             }
-            th1->Delete();
 
-            sprintf(title, "Cs radiation wave (%d ~ %d)", (n * wunit + 1),( (n + 1) * wunit));
+            sprintf(title, "Cs radiation wave (%d ~ %d)", (n * wunit + 1), ((n + 1) * wunit));
+            th1->SetTitle(title);
 
-            th1 = new TH1S("h1",title, wunit, 0, wunit);
             i = 0;
         }
     }
     ifs.close();
+    th1->Delete();
     // cout << "work" << endl;
 
     return 0;

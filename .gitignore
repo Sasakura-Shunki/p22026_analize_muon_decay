@@ -1,3 +1,4 @@
+*.tar*
 *.jpg
 *.o
 draw_graph
