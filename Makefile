@@ -21,3 +21,9 @@ $(TARGET): $(OBJS)
 # clean
 clean:
 	rm -f $(TARGET) $(OBJS)
+
+execute: 0514_cs.txt $(TARGET)
+	./$(TARGET)
+
+0514_cs.txt:
+	tar xJvf 0514_cs.tar.xz

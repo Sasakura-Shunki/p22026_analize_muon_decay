@@ -38,17 +38,26 @@ int main(int argc, char* argv[])
             c.Update();
             //c.Show();
             c.WaitPrimitive("h1");
-            cout <<"press key(0:continue, 1:save & quit, 2: quit): ";
-            cin >>func;
-            if(func == 1)
+            if (func < 1)
             {
-                c.Print(outf);
-                break;
+                cout << "press key(0:continue, 1:save & quit, 2: quit): ";
+                cin >> func;
+                if (cin.fail())
+                {
+                    cin.clear();
+                    cin.ignore();
+                }
+                if (func == 1)
+                {
+                    c.Print(outf);
+                    break;
+                }
+                if (func == 2)
+                {
+                    break;
+                }
             }
-            if(func == 2)
-            {
-                break;
-            }
+            func --;
 
             sprintf(title, "Cs radiation wave (%d ~ %d)", (n * wunit + 1), ((n + 1) * wunit));
             th1->SetTitle(title);
