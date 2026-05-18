@@ -1,0 +1,4 @@
+*.o
+draw_graph
+*.txt
+/.vscode/
