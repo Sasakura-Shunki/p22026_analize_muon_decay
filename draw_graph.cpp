@@ -12,7 +12,8 @@ int main(int argc, char* argv[])
     string filename, tmp;
     short bin;
     int i = 0;
-    int func ,n;
+    int func = 0;
+    int n = 0;
     char title[255];
     
     TApplication app("app", &argc, argv );
@@ -20,7 +21,6 @@ int main(int argc, char* argv[])
     TH1S *th1 = new TH1S("h1", title, wunit, 0, wunit);
     TCanvas c;
 
-    n = 0;
     filename = "0514_cs.txt";
     const char *outf = "graph.jpg";
     ifstream ifs(filename);
