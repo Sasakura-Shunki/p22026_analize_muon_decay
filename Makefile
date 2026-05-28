@@ -20,7 +20,7 @@ $(TARGET): $(OBJS)
 
 # clean
 clean:
-	rm -f $(TARGET) $(OBJS)
+	rm -f $(TARGET) $(OBJS) 0514_cs.txt
 
 execute: 0514_cs.txt $(TARGET)
 	./$(TARGET)
