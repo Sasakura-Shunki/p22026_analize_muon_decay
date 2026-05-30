@@ -56,8 +56,18 @@ int main(int argc, char* argv[])
                 {
                     break;
                 }
+                if (func > 2)
+                {
+			n += func;
+			func *= wunit;
+			while(getline(ifs, tmp)){
+				func --;
+				if(func ==0){
+					break;
+				}
+			}
+                }
             }
-            func --;
 
             sprintf(title, "Cs radiation wave (%d ~ %d)", (n * wunit + 1), ((n + 1) * wunit));
             th1->SetTitle(title);
