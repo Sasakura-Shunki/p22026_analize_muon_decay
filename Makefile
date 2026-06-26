@@ -22,8 +22,8 @@ $(TARGET): $(OBJS)
 clean:
 	rm -f $(TARGET) $(OBJS) 0514_cs.txt
 
-execute: 0514_cs.txt $(TARGET)
+execute: data/muondacay0.txt $(TARGET)
 	./$(TARGET)
 
-0514_cs.txt:
-	tar xJvf 0514_cs.tar.xz
+data/muondacay0.txt:
+	tar xzvf muondecay.tar.gz
