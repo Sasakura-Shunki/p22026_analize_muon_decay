@@ -5,7 +5,7 @@ int main(int argc, char** argv)
 	int xmax = 15000;
 	int binlen = 500;
 	if (argc == 2){
-		xmax = stoi(argv[1]);
+		binlen= stoi(argv[1]);
 		cout << xmax << argc <<endl;
 	}
 	string filename;

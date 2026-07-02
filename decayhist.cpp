@@ -5,8 +5,7 @@ int main(int argc, char** argv)
 	int xmax = 1500;
 	int binlen = 50;
 	if (argc == 2){
-		xmax = stoi(argv[1]);
-		cout << xmax << argc <<endl;
+		binlen= stoi(argv[1]);
 	}
 	string filename;
 	const char *title = "muon decay time; time; Count";
