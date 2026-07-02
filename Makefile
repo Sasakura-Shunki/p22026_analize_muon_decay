@@ -3,7 +3,7 @@ TARGET2 = makehist
 TARGET3 = decayhist
 
 SRCS = $(TARGET:%=%.cpp)
-OBJS = $(TARGET:%=%.o)
+OBJS = $(TARGET:%=%.o) func.o
 OBJS2 = $(TARGET2:%=%.o) func.o
 OBJS3 = $(TARGET3:%=%.o) func.o
 

@@ -24,10 +24,12 @@ int main(int argc, char** argv)
 	th1->LoadDecaytime(filename);
 
 	th1->Draw();
+
+	//app.Run();
+	c->WaitPrimitive();
+
 	c->Print(outf);
 	file->WriteObject(th1, "th1");
-
-	app.Run();
 
 	return 0;
 }

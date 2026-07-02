@@ -2,11 +2,11 @@
 
 int main(int argc, char** argv)
 {
+	int wunit = 1500;
 	int xmax = 15000;
 	int binlen = 500;
 	if (argc == 2){
 		binlen= stoi(argv[1]);
-		cout << xmax << argc <<endl;
 	}
 	string filename;
 	const char *title = "muon intsensity; Energy; Count";
@@ -16,8 +16,7 @@ int main(int argc, char** argv)
 	// auto file = new TFile("test.root", "RECREATE");
 	auto c = new TCanvas("c","c");
 	highthist *th1 = new highthist("h1", title, xmax /binlen, 0, xmax);
-	th1->binlen = binlen;
-	cout << th1->binlen << endl;
+	th1->Setparam(wunit, binlen, 100, xmax);
 
 	filename = "data/muondacay0.txt";
 	// filename = "test.txt";
