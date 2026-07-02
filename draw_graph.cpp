@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
     int n = 0;
     char title[255];
     int firstpeak, nextpeak;
-    int peaknum, nextnum;
+    int peaknum = 0, nextnum=0;
     int pen = 0;
     
     int gb;
@@ -45,16 +45,16 @@ int main(int argc, char* argv[])
 			firstpeak = bin;
 			peaknum = i;
 		}
-		if (gb - bin + 150 < (gb - firstpeak )*0.1){
+		if (gb - bin < 150 && gb - bin + 150 < (gb - firstpeak) * 0.3){
 			pen = 1;
 		}
 	}
 	if (pen == 1){
-		if (nextpeak < bin){
+		if (nextpeak > bin){
 			nextpeak = bin;
 			nextnum = i;
 		}
-		if (gb - bin + 50< (gb - nextpeak )*0.3){
+		if (gb - bin < 150 && gb - bin + 150 < (gb - nextpeak) * 0.3){
 			pen = 2;
 		}
 	}
@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
 	    cout << n << "\t" << peaknum << "\t" << nextnum << ":" <<pen << endl;
 		if(pen > 1){
 
-	    c.DrawFrame(0,gb - 100, wunit, gb +100);
+	    // c.DrawFrame(0,gb - 100, wunit, gb +100);
             th1->Draw("same");
 	    // c.GetYaxis().ZoomOut(.01, gb);
             c.Update();
