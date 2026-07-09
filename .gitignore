@@ -6,6 +6,7 @@ decayhist
 *.jpg
 *.swp
 *.o
+*.gch
 draw_graph
 *.txt
 /.vscode/
