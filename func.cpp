@@ -41,21 +41,34 @@ void highthist::LoadDecaytime(const string filename)
 	int n = 0;
 	short i = 0;
 	string tmp;
-	short bin;
+	int bin;
 	short old;
 	short pen = 0;
 	short size = 0;
 	short *peaknum;
 	short peak;
+	short errortype = 0;
+	short zerosize = 0;
+	short tmpi = 0;
 
 	peaknum = new short[wunit / 100];
 	bl = get_baseline(filename, baselen);
+	bpeaknum = get_peaknum(filename, basepeaklen);
 	ifstream ifs(filename);
 	old = bl;
 	while (getline(ifs, tmp))
 	{
 		bin = stoi(tmp);
+		if(i == 0)
+		{
+			old = bin;
+		}
 		i ++;
+		if (bin > bl * 10)
+		{
+			i = wunit;
+			errortype = 1;
+		}
 		if (pen % 2 == 1){
 			if (peak > bin){
 				peak = bin;
@@ -63,6 +76,19 @@ void highthist::LoadDecaytime(const string filename)
 			}
 			if (bl - bin < (bl - peak) * 0.9){
 				pen ++;
+				if(zerosize == 0)
+				{
+					if (peaknum[size-1] - bpeaknum > - wunit * 0.1)
+					{
+						zerosize = size;
+						if (peaknum[size-1] - bpeaknum > wunit * 0.1)
+						{
+							errortype = 2;
+							tmpi = i;
+							i = wunit;
+						}	
+					}
+				}
 			}
 		}
 		if (pen % 2 == 0){
@@ -73,6 +99,7 @@ void highthist::LoadDecaytime(const string filename)
 				peaknum[size-1] = i;
 			}
 		}
+		old = stoi(tmp);
 
 		if (i == wunit)
 		{
@@ -80,15 +107,23 @@ void highthist::LoadDecaytime(const string filename)
 			// 	pen = 2;
 			// }
 			n++;
-			if(size > 1){
-				this->AddBinContent((peaknum[1] - peaknum[0]) /binlen);
+			if(size > zerosize){
+				this->AddBinContent((peaknum[zerosize] - peaknum[zerosize-1]) /binlen);
 			}
 
 			i = 0;
 			pen = 0;
 			size = 0;
+			zerosize = 0;
+			if (errortype == 1){
+				i=1;
+				errortype = 0;
+			}
+			if (errortype ==2){
+				i = bpeaknum - peaknum[0] + tmpi;
+				errortype = 0;
+			}
 		}
-		old = stoi(tmp);
 	}
 	ifs.close();
 	delete[] peaknum;
@@ -99,26 +134,48 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 	int n = 0;
 	short i = 0;
 	string tmp;
-	short bin;
+	string intemp;
+	int bin;
 	short old;
 	short pen = 0;
 	short size = 0;
 	short *peaknum;
 	short peak;
+	short errortype = 0;
+	short zerosize = 0;
+	short tmpi = 0;
 	//for Draw
 	int func = 0;
 	char title[255];
 	const char *outf = "graph.jpg";
+	int skip = 0;
+	short funcon = 0;
 
 	peaknum = new short[wunit / 100];
 	bl = get_baseline(filename, baselen);
+	bpeaknum = get_peaknum(filename, basepeaklen);
 	ifstream ifs(filename);
 	old = bl;
 	while (getline(ifs, tmp))
 	{
 		bin = stoi(tmp);
+		if(i == 0)
+		{
+			old = bin;
+		}
 		i ++;
-		this->SetBinContent(i, bin); //for Draw
+		if (func == 0){
+			this->SetBinContent(i, bin); //for Draw
+		}
+		if (bin > bl * 10)
+		{
+			// start for Draw
+			skip += wunit - i;
+			cout << "error: " << n + 1 << " on " << bin << endl;
+			// end for Draw
+			i = wunit;
+			errortype = 1;
+		}
 		if (pen % 2 == 1){
 			if (peak > bin){
 				peak = bin;
@@ -126,6 +183,20 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 			}
 			if (bl - bin < (bl - peak) * 0.9){
 				pen ++;
+				if(zerosize == 0)
+				{
+					if (peaknum[size-1] - bpeaknum > - wunit * 0.1)
+					{
+						zerosize = size;
+						if (peaknum[size-1] - bpeaknum > wunit * 0.1)
+						{
+							cout << "out of peak error: " << n + 1 << " on " << bin << endl; //for Draw
+							errortype = 2;
+							tmpi = i;
+							i = wunit;
+						}	
+					}
+				}
 			}
 		}
 		if (pen % 2 == 0){
@@ -136,66 +207,91 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 				peaknum[size-1] = i;
 			}
 		}
+		old = stoi(tmp);
 
 		if (i == wunit)
 		{
 			n++;
-			
+
 			// start for Draw
 			/*
-			if(size > 1){
-				this->AddBinContent((peaknum[1] - peaknum[0]) /binlen);
-			}
-			*/
-			cout << n << ":" << size;
-			for (int j =0 ; j <size; j++){
-				cout << "\t" << peaknum[j] * 4;
-			}
-			cout << endl;
-			if(size > 1){
-				sprintf(title, "muon wave (%d ~ %d); record time(ns); count", (n * wunit + 1), ((n + 1) * wunit));
-				this->SetTitle(title);
-				this->Draw();
-				c.Update();
-				c.WaitPrimitive("h1");
-				cout << "press key(0:continue, 1:save & quit, 2: quit): ";
-				cin >> func;
-				if (cin.fail())
-				{
-					cin.clear();
-					cin.ignore();
+			   if(size > 1){
+			   this->AddBinContent((peaknum[1] - peaknum[0]) /binlen);
+			   }
+			   */
+			if (func == 0){
+				cout << n << ":" << size;
+				for (int j =0 ; j <size; j++){
+					cout << "\t" << peaknum[j] * 4;
 				}
-				if (func == 1)
-				{
-					c.Print(outf);
-					break;
-				}
-				if (func == 2)
-				{
-					break;
-				}
-				if (func > 2)
-				{
-					n += func;
-					func *= wunit;
-					while(getline(ifs, tmp)){
-						func --;
-						if(func ==0){
+				cout << endl;
+				if(size > zerosize || funcon == 1){
+					funcon = 0;
+					sprintf(title, "muon wave (%d ~ %d); record time(ns); count", (n * wunit + 1 + skip), ((n + 1) * wunit + skip));
+					this->SetTitle(title);
+					this->Draw();
+					c.Update();
+					c.WaitPrimitive("h1");
+					cout << "press key(0:continue, 1:save & quit, 2: quit): ";
+					getline(cin, intemp);
+					if (intemp[0] == 'g')
+					{
+						func = - n;
+						intemp= intemp.substr(1); 
+						funcon = 1;
+					}
+					try{
+						func += stoi(intemp);
+					}catch(...){
+					}
+					/*
+					   cin >> func;
+					   if (cin.fail())
+					   {
+					   cin.clear();
+					   cin.ignore();
+					   }
+					   */
+					if (funcon == 0){
+						if (func == 1)
+						{
+							c.Print(outf);
 							break;
+						}
+						if (func == 2)
+						{
+							break;
+						}
+						if (func > 2)
+						{
+							funcon = 1;
 						}
 					}
 				}
 			}
-			//end for Draw
+			if (funcon == 1)
+			{
+				func --;
+			}
+		//end for Draw
 
-			i = 0;
-			pen = 0;
-			size = 0;
+		i = 0;
+		pen = 0;
+		size = 0;
+		zerosize = 0;
+		if (errortype == 1){
+			i=1;
+			errortype = 0;
 		}
-		old = stoi(tmp);
+		if (errortype ==2){
+			i = bpeaknum - peaknum[0] + tmpi;
+			skip = wunit - tmpi + i;
+			errortype = 0;
+		}
 	}
-	ifs.close();
-	delete[] peaknum;
+}
+ifs.close();
+delete[] peaknum;
 }
 
 short highthist::get_baseline(const string filename, int level)
@@ -220,10 +316,68 @@ short highthist::get_baseline(const string filename, int level)
 	return sbl / level;
 }
 
-void highthist::Setparam(int w, int b, int bl, int x)
+short highthist::get_peaknum(const string filename, int level)
+{
+	int n = 0;
+	short i = 0;
+	string tmp;
+	int peaknum =0;
+	int speaknum =0;
+	int bin;
+	short old;
+	short pen = 0;
+	short peak;
+
+	ifstream ifs(filename);
+	old = bl;
+	while (getline(ifs, tmp))
+	{
+		bin = stoi(tmp);
+		i ++;
+		if (bin > bl * 10)
+		{
+			i = wunit;
+		}
+		if (pen == 1){
+			if (peak > bin){
+				peak = bin;
+				peaknum = i;
+			}
+			if (bl - bin < (bl - peak) * 0.9){
+				pen ++;
+				speaknum += peaknum;
+			}
+		}
+		if (pen == 0){
+			if (old - bin  > thre){
+				pen ++;
+				peak = bin;
+				peaknum = i;
+			}
+		}
+		old = stoi(tmp);
+
+		if (i == wunit)
+		{
+			n++;
+			if (n == level)
+			{
+				break;
+			}
+			i = 0;
+			pen = 0;
+			old = bl;
+		}
+	}
+	ifs.close();
+
+	return speaknum / level;
+}
+
+void highthist::Setparam(int w, int b, int baseliner, int x)
 {
 	wunit = w;
 	binlen = b;
-	baselen = bl;
+	baselen = baseliner;
 	xmax = x;
 }

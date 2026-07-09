@@ -1,6 +1,7 @@
 TARGET = draw_graph makehist decayhist
 
 CLASS = func.o
+HEADER = makehist.hpp
 
 ROOTCFLAGS = $(shell root-config --cflags)
 ROOTLIBS   = $(shell root-config --libs)
@@ -21,7 +22,7 @@ endef
 $(foreach t,$(TARGET),$(eval $(call DEFF_TARGET_COMP,$(t))))
 
 # suffix rule
-.cc.o:
+%.o:%.cpp $(HEADER)
 	$(CC) $(CXXFLAGS) -c $<
 
 # clean
