@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 	highthist *th1 = new highthist("h1", title, xmax /binlen, 0, xmax);
 	th1->Setparam(wunit, binlen, 100, xmax);
 
-	filename = "data/muondacay0.txt";
+	filename = "data/wave0.txt";
 	// filename = "test.txt";
 	const char *outf = "graph.jpg";
 

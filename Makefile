@@ -34,7 +34,7 @@ $(TARGET3): $(OBJS3)
 clean:
 	rm -f $(TARGET) $(OBJS) $(TARGET2) $(OBJS2)
 
-execute: data/muondacay0.txt $(TARGET)
+execute: data/wave0.txt $(TARGET)
 	./$(TARGET)
 
 data/muondacay0.txt:

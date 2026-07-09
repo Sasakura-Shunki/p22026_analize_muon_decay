@@ -47,7 +47,6 @@ void highthist::LoadDecaytime(const string filename)
 	short size = 0;
 	short *peaknum;
 	short peak;
-	short thre = 70;
 
 	peaknum = new short[wunit / 100];
 	bl = get_baseline(filename, baselen);
@@ -110,7 +109,6 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 	int func = 0;
 	char title[255];
 	const char *outf = "graph.jpg";
-	short thre = 70;
 
 	peaknum = new short[wunit / 100];
 	bl = get_baseline(filename, baselen);

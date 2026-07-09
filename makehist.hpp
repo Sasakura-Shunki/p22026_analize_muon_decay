@@ -23,6 +23,7 @@ class highthist : public TH1S{
 		void LoadDecaytime(const string);
 		void Setparam(int, int, int, int);
 		void DrawDecay(const string, TCanvas &);
+		short thre = 70;
 	private:
 		short bl = 0;
 		short get_baseline(const string , int);
