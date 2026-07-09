@@ -7,7 +7,7 @@ gcc version 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04.1)
 
 ROOT Version: 6.36.12
 
-make
+GNU Make 4.3
 
 # コンパイル
 データファイルは`./data/`内におく。
