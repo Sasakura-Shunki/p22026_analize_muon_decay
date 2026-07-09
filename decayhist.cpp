@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 	const char *title = "muon decay time; time(ns); Count";
 
 	TApplication app("app", &argc, argv );
-	auto file = new TFile("hist.root", "RECREATE");
+	auto file = new TFile("decay_hist.root", "RECREATE");
 	// auto file = new TFile("test.root", "RECREATE");
 	auto c = new TCanvas("c","c");
 	highthist *th1 = new highthist("h1", title, xmax /binlen, 0, xmax*4);

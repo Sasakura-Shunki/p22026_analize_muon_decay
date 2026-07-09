@@ -1,11 +1,6 @@
-TARGET = draw_graph
-TARGET2 = makehist
-TARGET3 = decayhist
+TARGET = draw_graph makehist decayhist
 
-SRCS = $(TARGET:%=%.cpp)
-OBJS = $(TARGET:%=%.o) func.o
-OBJS2 = $(TARGET2:%=%.o) func.o
-OBJS3 = $(TARGET3:%=%.o) func.o
+CLASS = func.o
 
 ROOTCFLAGS = $(shell root-config --cflags)
 ROOTLIBS   = $(shell root-config --libs)
@@ -15,27 +10,37 @@ CXXFLAGS   = $(ROOTCFLAGS) -Wall -fPIC
 CXXLIBS    = $(ROOTLIBS)
 CC = g++ 
 
-all: $(TARGET) $(TARGET2) $(TARGET3)
+.PHONY: all
+all: $(TARGET)
 
-$(TARGET): $(OBJS)
-	$(CC) $(OBJS) $(CXXLIBS) $(CXXFLAGS) -o $@
+define DEFF_TARGET_COMP
+$(1): $(1).o $(CLASS)
+	$$(CC) $$^ $$(CXXLIBS) $$(CXXFLAGS) -o $$@
+endef
 
-$(TARGET2): $(OBJS2)
-	$(CC) $(OBJS2) $(CXXLIBS) $(CXXFLAGS) -o $@
-
-$(TARGET3): $(OBJS3)
-	$(CC) $(OBJS3) $(CXXLIBS) $(CXXFLAGS) -o $@
+$(foreach t,$(TARGET),$(eval $(call DEFF_TARGET_COMP,$(t))))
 
 # suffix rule
 .cc.o:
 	$(CC) $(CXXFLAGS) -c $<
 
 # clean
+.PHONY: clean
 clean:
-	rm -f $(TARGET) $(OBJS) $(TARGET2) $(OBJS2)
+	$(RM) $(TARGET) $(TARGET2) $(TARGET3) *.o
 
-execute: data/wave0.txt $(TARGET)
-	./$(TARGET)
+DATAFILE = data/wave0.txt 
+DATATAR = data/0702wave.tar.gz
+TAR = tar xzvf 
 
-data/muondacay0.txt:
-	tar xzvf muondecay.tar.gz
+.PHONY: execute
+execute: $(TARGET) $(DATAFILE)
+	$(foreach t,$(TARGET),./$(t);)
+
+$(DATAFILE): $(DATATAR)
+	$(TAR) $(DATATAR) -C $(@D)
+
+# all clean
+.PHONY: allclean
+allclean: clean
+	$(RM) $(dir $(DATAFILE))*.txt
