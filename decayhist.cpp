@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 	/*
 	// reading data
 	string filename2;
-	filename2 = "/home/shunki/programing/4_1H/assignment_research/0625_muondecay/data/muondacay0.txt";
+	filename2 = "../0625_muondecay/data/muondacay0.txt";
 	th1->LoadDecaytime(filename2);
 	*/
 
