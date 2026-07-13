@@ -13,28 +13,21 @@ class highthist : public TH1S{
 	public:
 		highthist(const char *name,const char *title,Int_t nbinsx,Double_t xlow,Double_t xup): TH1S(name, title, nbinsx, xlow, xup) 
 	{
-		wunit = 1500;
-		binlen = 1;
-		baselen = 100;
-		basepeaklen = 100;
 		xmax = xup;
-		thre = 70;
-		bl = 0;
-		bpeaknum = 0;
 	}
-		int wunit;
-		int binlen;
-		int baselen;
-		int basepeaklen;
-		int xmax;
-		short thre;
+		int wunit = 1500;
+		int binlen = 1;
+		int baselen = 100;
+		int basepeaklen = 100;
+		int xmax = 15000;
+		short thre = 70;
 		void Loadhight(const string);
 		void LoadDecaytime(const string);
 		void Setparam(int, int, int, int);
 		void DrawDecay(const string, TCanvas &);
 	private:
-		short bl;
-		short bpeaknum;
+		short bl = 0;
+		short bpeaknum = 0;
 		short get_baseline(const string , int);
 		short get_peaknum(const string , int);
 	protected:

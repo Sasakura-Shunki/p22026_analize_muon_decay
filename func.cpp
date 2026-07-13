@@ -68,6 +68,7 @@ void highthist::LoadDecaytime(const string filename)
 		{
 			i = wunit;
 			errortype = 1;
+			cout << "error: " << n + 1 << " on " << bin << endl;
 		}
 		if (pen % 2 == 1){
 			if (peak > bin){
@@ -86,6 +87,7 @@ void highthist::LoadDecaytime(const string filename)
 							errortype = 2;
 							tmpi = i;
 							i = wunit;
+							cout << "out of peak error: " << n + 1 << " on " << bin << endl;
 						}	
 					}
 				}
@@ -241,6 +243,9 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 						funcon = 1;
 					}
 					try{
+						if (stoi(intemp) < 3){
+							func = 0;
+						}
 						func += stoi(intemp);
 					}catch(...){
 					}
