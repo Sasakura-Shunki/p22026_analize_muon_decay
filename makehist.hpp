@@ -21,6 +21,8 @@ class highthist : public TH1S{
 		int basepeaklen = 100;
 		int xmax = 15000;
 		short thre = 70;
+		short threbinnum = 3;
+		float wavedump = 0.99;
 		void Loadhight(const string);
 		void LoadDecaytime(const string);
 		void Setparam(int, int, int, int);
