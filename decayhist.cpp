@@ -1,4 +1,5 @@
 #include "makehist.hpp"
+#include <fstream>
 
 int main(int argc, char** argv)
 {
@@ -29,24 +30,16 @@ int main(int argc, char** argv)
 	th1->threbinnum= threibnnum;
 	th1->wavedump= wavedump;
 
-	/*
-	// reading data
+	string datalist;
+	datalist = "datalist.txt";
+	ifstream ifs(datalist);
 	string filename;
-	filename = "data/test1.txt";
-	th1->LoadDecaytime(filename);
-	cout << th1->Integral()<<endl;
-	*/
-
-	// reading data
-	string filename;
-	filename = "data/wave0.txt";
-	th1->LoadDecaytime(filename);
-
-	// reading data
-	string filename2;
-	filename2 = "../0709_muondecay/data/wave0.txt";
-	th1->LoadDecaytime(filename2);
-
+	while (getline(ifs, filename)) {
+		if(filename.substr(0,2) != "//"){
+		th1->LoadDecaytime(filename);
+		cout << "current number of events (" << filename << "):\t" << th1->Integral() <<endl;
+		}
+	}
 
 	th1->Draw();
 
