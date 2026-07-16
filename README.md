@@ -10,10 +10,10 @@ ROOT Version: 6.36.12
 GNU Make 4.3
 
 # コンパイル
-データファイルは`./data/`内におく。
-root path環境下で以下を打つ。
+データファイルは`./datalist.txt`内にpathを入力する。
+root path環境下で以下を実行する。
 ```bash
-$ make
+make
 ```
 
 # ファイル
