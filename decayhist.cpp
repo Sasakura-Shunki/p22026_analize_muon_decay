@@ -40,6 +40,7 @@ int main(int argc, char** argv)
 		cout << "current number of events (" << filename << "):\t" << th1->Integral() <<endl;
 		}
 	}
+	ifs.close();
 
 	th1->Draw();
 
