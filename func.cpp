@@ -262,6 +262,8 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 						if (func == 1)
 						{
 							c.Print(outf);
+							auto file = new TFile("waveform.root", "RECREATE");
+							file->WriteObject(this, "th1");
 							break;
 						}
 						if (func == 2)
