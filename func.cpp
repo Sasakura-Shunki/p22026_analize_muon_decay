@@ -42,7 +42,7 @@ void highthist::LoadDecaytime(const string filename)
 	short i = 0;
 	string tmp;
 	int bin;
-	short old;
+	short *old;
 	short pen = 0;
 	short size = 0;
 	short *peaknum;
@@ -52,16 +52,16 @@ void highthist::LoadDecaytime(const string filename)
 	short tmpi = 0;
 
 	peaknum = new short[wunit / 100];
+	old = new short[threbinnum];
 	bl = get_baseline(filename, baselen);
 	bpeaknum = get_peaknum(filename, basepeaklen);
 	ifstream ifs(filename);
-	old = bl;
 	while (getline(ifs, tmp))
 	{
 		bin = stoi(tmp);
 		if(i == 0)
 		{
-			old = bin;
+			old[i] = bin;
 		}
 		i ++;
 		if (bin > bl * 10)
@@ -75,7 +75,7 @@ void highthist::LoadDecaytime(const string filename)
 				peak = bin;
 				peaknum[size-1] = i;
 			}
-			if (bl - bin < (bl - peak) * 0.9){
+			if (bl - bin < (bl - peak) * wavedump){
 				pen ++;
 				if(zerosize == 0)
 				{
@@ -94,14 +94,14 @@ void highthist::LoadDecaytime(const string filename)
 			}
 		}
 		if (pen % 2 == 0){
-			if (old - bin  > thre){
+			if (old[i%threbinnum] - bin  > thre){
 				size ++;
 				pen ++;
 				peak = bin;
 				peaknum[size-1] = i;
 			}
 		}
-		old = stoi(tmp);
+		old[i%threbinnum] = stoi(tmp);
 
 		if (i == wunit)
 		{
@@ -129,6 +129,7 @@ void highthist::LoadDecaytime(const string filename)
 	}
 	ifs.close();
 	delete[] peaknum;
+	delete[] old;
 }
 
 void highthist::DrawDecay(const string filename, TCanvas &c)
@@ -138,7 +139,7 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 	string tmp;
 	string intemp;
 	int bin;
-	short old;
+	short *old;
 	short pen = 0;
 	short size = 0;
 	short *peaknum;
@@ -154,16 +155,16 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 	short funcon = 0;
 
 	peaknum = new short[wunit / 100];
+	old = new short[threbinnum];
 	bl = get_baseline(filename, baselen);
 	bpeaknum = get_peaknum(filename, basepeaklen);
 	ifstream ifs(filename);
-	old = bl;
 	while (getline(ifs, tmp))
 	{
 		bin = stoi(tmp);
 		if(i == 0)
 		{
-			old = bin;
+			old[i] = bin;
 		}
 		i ++;
 		if (func == 0){
@@ -183,7 +184,7 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 				peak = bin;
 				peaknum[size-1] = i;
 			}
-			if (bl - bin < (bl - peak) * 0.9){
+			if (bl - bin < (bl - peak) * wavedump){
 				pen ++;
 				if(zerosize == 0)
 				{
@@ -202,14 +203,14 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 			}
 		}
 		if (pen % 2 == 0){
-			if (old - bin  > thre){
+			if (old[i%threbinnum] - bin  > thre){
 				size ++;
 				pen ++;
 				peak = bin;
 				peaknum[size-1] = i;
 			}
 		}
-		old = stoi(tmp);
+		old[i%threbinnum] = stoi(tmp);
 
 		if (i == wunit)
 		{
@@ -297,6 +298,7 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 }
 ifs.close();
 delete[] peaknum;
+delete[] old;
 }
 
 short highthist::get_baseline(const string filename, int level)
