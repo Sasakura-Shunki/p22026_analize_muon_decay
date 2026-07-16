@@ -46,7 +46,7 @@ void highthist::LoadDecaytime(const string filename)
 	short pen = 0;
 	short size = 0;
 	short *peaknum;
-	short peak;
+	short peak=0;
 	short errortype = 0;
 	short zerosize = 0;
 	short tmpi = 0;
@@ -143,7 +143,7 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 	short pen = 0;
 	short size = 0;
 	short *peaknum;
-	short peak;
+	short peak =0;
 	short errortype = 0;
 	short zerosize = 0;
 	short tmpi = 0;
