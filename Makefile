@@ -7,7 +7,7 @@ ROOTCFLAGS = $(shell root-config --cflags)
 ROOTLIBS   = $(shell root-config --libs)
 ROOTGLIBS = $(shell root-config --glibs)
 
-CXXFLAGS   = $(ROOTCFLAGS) -Wall -fPIC
+CXXFLAGS   = $(ROOTCFLAGS) -Wall -fPIC -O3
 CXXLIBS    = $(ROOTLIBS)
 CC = g++ 
 
