@@ -32,6 +32,7 @@ class highthist : public TH1S{
 		short bpeaknum = 0;
 		short get_baseline(const string , int);
 		short get_peaknum(const string , int);
+		void writeobj(const char*, TCanvas &);
 	protected:
 		using TH1S::TH1S;
 };

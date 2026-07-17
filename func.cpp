@@ -1,4 +1,5 @@
 #include "makehist.hpp"
+#include <string>
 
 void highthist::Loadhight(const string filename)
 {
@@ -43,14 +44,17 @@ void highthist::LoadDecaytime(const string filename)
 	string tmp;
 	int bin;
 	short *old;
-	short pen = 0;
+	short peindex = 0;
 	short size = 0;
 	short *peaknum;
 	short peak=0;
 	short errortype = 0;
 	short zerosize = 0;
 	short tmpi = 0;
+	short index = 0;
+	short diffpeak = 0;
 
+	short peakoutthre = wunit * 0.1;
 	peaknum = new short[wunit / 100];
 	old = new short[threbinnum];
 	bl = get_baseline(filename, baselen);
@@ -59,30 +63,37 @@ void highthist::LoadDecaytime(const string filename)
 	while (getline(ifs, tmp))
 	{
 		bin = stoi(tmp);
-		if(i == 0)
+		i ++;
+		if(index == threbinnum - 1){
+			index = 0;
+		}else {
+			index ++;
+		}
+		if(i == index)
 		{
 			old[i] = bin;
 		}
-		i ++;
+
 		if (bin > bl * 10)
 		{
 			i = wunit;
 			errortype = 1;
 			cout << "error: " << n + 1 << " on " << bin << endl;
 		}
-		if (pen % 2 == 1){
+		if (peindex == 1){
 			if (peak > bin){
 				peak = bin;
 				peaknum[size-1] = i;
 			}
 			if (bl - bin < (bl - peak) * wavedump){
-				pen ++;
+				peindex = 0;
 				if(zerosize == 0)
 				{
-					if (peaknum[size-1] - bpeaknum > - wunit * 0.1)
+					diffpeak = peaknum[size-1] - bpeaknum;
+					if (diffpeak > - peakoutthre)
 					{
 						zerosize = size;
-						if (peaknum[size-1] - bpeaknum > wunit * 0.1)
+						if (diffpeak > peakoutthre)
 						{
 							errortype = 2;
 							tmpi = i;
@@ -92,38 +103,42 @@ void highthist::LoadDecaytime(const string filename)
 					}
 				}
 			}
-		}
-		if (pen % 2 == 0){
-			if (old[i%threbinnum] - bin  > thre){
+		}else
+		{
+			if (old[index] - bin  > thre){
 				size ++;
-				pen ++;
+				peindex = 1;
 				peak = bin;
 				peaknum[size-1] = i;
 			}
 		}
-		old[i%threbinnum] = stoi(tmp);
+		old[index] = bin;
 
 		if (i == wunit)
 		{
-			// if (bl - bin + 150 < (bl - nextpeak) * 0.4){
-			// 	pen = 2;
-			// }
 			n++;
 			if(size > zerosize){
 				this->AddBinContent((peaknum[zerosize] - peaknum[zerosize-1]) /binlen);
 			}
 
-			i = 0;
-			pen = 0;
+			index = 0;
+			peindex = 0;
 			size = 0;
 			zerosize = 0;
-			if (errortype == 1){
-				i=1;
-				errortype = 0;
-			}
-			if (errortype ==2){
-				i = bpeaknum - peaknum[0] + tmpi;
-				errortype = 0;
+			
+			switch (errortype) {
+				case 0:
+					i = 0;
+					break;
+				case 1:
+					i = 1;
+					errortype = 0;
+					break;
+				case 2:
+					i = bpeaknum - peaknum[0] + tmpi;
+					errortype = 0;
+					break;
+			
 			}
 		}
 	}
@@ -140,7 +155,7 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 	string intemp;
 	int bin;
 	short *old;
-	short pen = 0;
+	short peindex = 0;
 	short size = 0;
 	short *peaknum;
 	short peak =0;
@@ -153,7 +168,10 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 	const char *outf = "graph.jpg";
 	int skip = 0;
 	short funcon = 0;
+	short index = 0;
+	short diffpeak = 0;
 
+	short peakoutthre = wunit * 0.1;
 	peaknum = new short[wunit / 100];
 	old = new short[threbinnum];
 	bl = get_baseline(filename, baselen);
@@ -162,11 +180,17 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 	while (getline(ifs, tmp))
 	{
 		bin = stoi(tmp);
-		if(i == 0)
+		i ++;
+		if(index == threbinnum - 1){
+			index = 0;
+		}else {
+			index ++;
+		}
+		if(i == index)
 		{
 			old[i] = bin;
 		}
-		i ++;
+
 		if (func == 0){
 			this->SetBinContent(i, bin); //for Draw
 		}
@@ -179,19 +203,20 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 			i = wunit;
 			errortype = 1;
 		}
-		if (pen % 2 == 1){
+		if (peindex == 1){
 			if (peak > bin){
 				peak = bin;
 				peaknum[size-1] = i;
 			}
 			if (bl - bin < (bl - peak) * wavedump){
-				pen ++;
+				peindex = 0;
 				if(zerosize == 0)
 				{
-					if (peaknum[size-1] - bpeaknum > - wunit * 0.1)
+					diffpeak = peaknum[size-1] - bpeaknum;
+					if (diffpeak > - peakoutthre)
 					{
 						zerosize = size;
-						if (peaknum[size-1] - bpeaknum > wunit * 0.1)
+						if (diffpeak > peakoutthre)
 						{
 							cout << "out of peak error: " << n + 1 << " on " << bin << endl; //for Draw
 							errortype = 2;
@@ -201,16 +226,16 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 					}
 				}
 			}
-		}
-		if (pen % 2 == 0){
-			if (old[i%threbinnum] - bin  > thre){
+		}else
+		{
+			if (old[index] - bin  > thre){
 				size ++;
-				pen ++;
+				peindex = 1;
 				peak = bin;
 				peaknum[size-1] = i;
 			}
 		}
-		old[i%threbinnum] = stoi(tmp);
+		old[index] = bin;
 
 		if (i == wunit)
 		{
@@ -250,29 +275,24 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 						func += stoi(intemp);
 					}catch(...){
 					}
-					/*
-					   cin >> func;
-					   if (cin.fail())
-					   {
-					   cin.clear();
-					   cin.ignore();
-					   }
-					   */
 					if (funcon == 0){
-						if (func == 1)
-						{
-							c.Print(outf);
-							auto file = new TFile("waveform.root", "RECREATE");
-							file->WriteObject(this, "th1");
-							break;
-						}
-						if (func == 2)
-						{
-							break;
-						}
-						if (func > 2)
-						{
-							funcon = 1;
+						switch (func) {
+							case 0:
+								break;
+							case 1:
+								writeobj(outf, c);
+								ifs.close();
+								delete[] peaknum;
+								delete[] old;
+								return;
+							case 2:
+								ifs.close();
+								delete[] peaknum;
+								delete[] old;
+								return;
+							default:
+								funcon = 1;
+								break;
 						}
 					}
 				}
@@ -281,26 +301,31 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 			{
 				func --;
 			}
-		//end for Draw
+			//end for Draw
 
-		i = 0;
-		pen = 0;
-		size = 0;
-		zerosize = 0;
-		if (errortype == 1){
-			i=1;
-			errortype = 0;
-		}
-		if (errortype ==2){
-			i = bpeaknum - peaknum[0] + tmpi;
-			skip = wunit - tmpi + i;
-			errortype = 0;
+			index = 0;
+			peindex = 0;
+			size = 0;
+			zerosize = 0;
+
+			switch (errortype) {
+				case 0:
+					i = 0;
+					break;
+				case 1:
+					i=1;
+					errortype = 0;
+					break;
+				case 2:
+					i = bpeaknum - peaknum[0] + tmpi;
+					errortype = 0;
+					break;
+			}
 		}
 	}
-}
-ifs.close();
-delete[] peaknum;
-delete[] old;
+	ifs.close();
+	delete[] peaknum;
+	delete[] old;
 }
 
 short highthist::get_baseline(const string filename, int level)
@@ -389,4 +414,10 @@ void highthist::Setparam(int w, int b, int baseliner, int x)
 	binlen = b;
 	baselen = baseliner;
 	xmax = x;
+}
+void highthist::writeobj(const char *outf, TCanvas &c)
+{
+	c.Print(outf);
+	auto file = new TFile("waveform.root", "RECREATE");
+	file->WriteObject(this, "th1");
 }
