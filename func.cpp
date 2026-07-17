@@ -19,7 +19,7 @@ void highthist::Loadhight(const string filename)
 			max = comp;
 		}
 
-		i ++;
+		++ i;
 		if (i == wunit)
 		{
 			if (max  < xmax ) // An error occur on app.Run() if the number larger than x max try to be add.
@@ -31,7 +31,7 @@ void highthist::Loadhight(const string filename)
 			}
 			max = 0;
 			i = 0;
-			n++;
+			++ n;
 		}
 	}
 	ifs.close();
@@ -59,33 +59,32 @@ void highthist::LoadDecaytime(const string filename)
 	old = new short[threbinnum];
 	bl = get_baseline(filename, baselen);
 	bpeaknum = get_peaknum(filename, basepeaklen);
+	short blthre = bl * 10;
 	ifstream ifs(filename);
 	while (getline(ifs, tmp))
 	{
 		bin = stoi(tmp);
-		i ++;
+		++ i;
 		if(index == threbinnum - 1){
 			index = 0;
 		}else {
-			index ++;
+			++ index;
 		}
 		if(i == index)
 		{
 			old[i] = bin;
 		}
 
-		if (bin > bl * 10)
+		if (bin > blthre)
 		{
 			i = wunit;
 			errortype = 1;
 			cout << "error: " << n + 1 << " on " << bin << endl;
-		}
-		if (peindex == 1){
+		}else if (peindex == 1){
 			if (peak > bin){
 				peak = bin;
 				peaknum[size-1] = i;
-			}
-			if (bl - bin < (bl - peak) * wavedump){
+			}else if (bl - bin < (bl - peak) * wavedump){
 				peindex = 0;
 				if(zerosize == 0)
 				{
@@ -106,7 +105,7 @@ void highthist::LoadDecaytime(const string filename)
 		}else
 		{
 			if (old[index] - bin  > thre){
-				size ++;
+				++ size;
 				peindex = 1;
 				peak = bin;
 				peaknum[size-1] = i;
@@ -116,9 +115,9 @@ void highthist::LoadDecaytime(const string filename)
 
 		if (i == wunit)
 		{
-			n++;
+			++ n;
 			if(size > zerosize){
-				this->AddBinContent((peaknum[zerosize] - peaknum[zerosize-1]) /binlen);
+				this->AddBinContent((- peaknum[zerosize-1] + peaknum[zerosize]) /binlen);
 			}
 
 			index = 0;
@@ -176,15 +175,16 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 	old = new short[threbinnum];
 	bl = get_baseline(filename, baselen);
 	bpeaknum = get_peaknum(filename, basepeaklen);
+	short blthre = bl * 10;
 	ifstream ifs(filename);
 	while (getline(ifs, tmp))
 	{
 		bin = stoi(tmp);
-		i ++;
+		++ i;
 		if(index == threbinnum - 1){
 			index = 0;
 		}else {
-			index ++;
+			++ index;
 		}
 		if(i == index)
 		{
@@ -194,7 +194,7 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 		if (func == 0){
 			this->SetBinContent(i, bin); //for Draw
 		}
-		if (bin > bl * 10)
+		if (bin > blthre)
 		{
 			// start for Draw
 			skip += wunit - i;
@@ -202,13 +202,11 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 			// end for Draw
 			i = wunit;
 			errortype = 1;
-		}
-		if (peindex == 1){
+		}else if (peindex == 1){
 			if (peak > bin){
 				peak = bin;
 				peaknum[size-1] = i;
-			}
-			if (bl - bin < (bl - peak) * wavedump){
+			}else if (bl - bin < (bl - peak) * wavedump){
 				peindex = 0;
 				if(zerosize == 0)
 				{
@@ -229,7 +227,7 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 		}else
 		{
 			if (old[index] - bin  > thre){
-				size ++;
+				++ size;
 				peindex = 1;
 				peak = bin;
 				peaknum[size-1] = i;
@@ -239,7 +237,7 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 
 		if (i == wunit)
 		{
-			n++;
+			++ n;
 
 			// start for Draw
 			/*
@@ -249,7 +247,7 @@ void highthist::DrawDecay(const string filename, TCanvas &c)
 			   */
 			if (func == 0){
 				cout << n << ":" << size;
-				for (int j =0 ; j <size; j++){
+				for (int j =0 ; j <size; ++ j){
 					cout << "\t" << peaknum[j] * 4;
 				}
 				cout << endl;
@@ -339,7 +337,7 @@ short highthist::get_baseline(const string filename, int level)
 	while (getline(ifs, tmp))
 	{
 		sbl += stoi(tmp);
-		i ++;
+		++ i;
 		if (i == level)
 		{
 			break;
@@ -367,7 +365,7 @@ short highthist::get_peaknum(const string filename, int level)
 	while (getline(ifs, tmp))
 	{
 		bin = stoi(tmp);
-		i ++;
+		++ i;
 		if (bin > bl * 10)
 		{
 			i = wunit;
@@ -378,13 +376,13 @@ short highthist::get_peaknum(const string filename, int level)
 				peaknum = i;
 			}
 			if (bl - bin < (bl - peak) * 0.9){
-				pen ++;
+				++ pen;
 				speaknum += peaknum;
 			}
 		}
 		if (pen == 0){
 			if (old - bin  > thre){
-				pen ++;
+				++ pen;
 				peak = bin;
 				peaknum = i;
 			}
@@ -393,7 +391,7 @@ short highthist::get_peaknum(const string filename, int level)
 
 		if (i == wunit)
 		{
-			n++;
+			++ n;
 			if (n == level)
 			{
 				break;
