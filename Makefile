@@ -25,6 +25,10 @@ $(foreach t,$(TARGET),$(eval $(call DEFF_TARGET_COMP,$(t))))
 %.o:%.cpp $(HEADER)
 	$(CC) $(CXXFLAGS) -c $<
 
+.PHONY: debug
+debug: CXXFLAGS = $(ROOTCFLAGS) -O0 -g
+debug: all
+
 # clean
 .PHONY: clean
 clean:
