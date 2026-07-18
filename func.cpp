@@ -1,5 +1,7 @@
 #include "makehist.hpp"
-#include <string>
+#include <cstdio>
+#include<stdio.h>
+#include<stdlib.h>
 
 void highthist::Loadhight(const string filename)
 {
@@ -39,9 +41,12 @@ void highthist::Loadhight(const string filename)
 
 void highthist::LoadDecaytime(const string filename)
 {
+	// ios_base::sync_with_stdio(false);
 	int n = 0;
 	short i = 0;
-	string tmp;
+	// string tmp;
+	char tmp[16];
+	char *endp;
 	int bin;
 	short *old;
 	short peindex = 0;
@@ -51,8 +56,9 @@ void highthist::LoadDecaytime(const string filename)
 	short errortype = 0;
 	short zerosize = 0;
 	short tmpi = 0;
-	short index = 0;
 	short diffpeak = 0;
+	short *oldnum;
+	short *circlenum;
 
 	short peakoutthre = wunit * 0.1;
 	peaknum = new short[wunit / 100];
@@ -60,24 +66,28 @@ void highthist::LoadDecaytime(const string filename)
 	bl = get_baseline(filename, baselen);
 	bpeaknum = get_peaknum(filename, basepeaklen);
 	short blthre = bl * 10;
-	ifstream ifs(filename);
-	while (getline(ifs, tmp))
+	FILE* f = fopen(filename.c_str(), "r");
+	circlenum = old + threbinnum -1;
+	oldnum = old;
+	// ifstream ifs(filename);
+	// while (getline(ifs, tmp))
+	while (fgets(tmp, 16, f))
 	{
-		bin = stoi(tmp);
-		++ i;
-		if(index == threbinnum - 1){
-			index = 0;
+		// bin = stoi(tmp);
+		bin = strtol(tmp, &endp, 10);
+		if(oldnum == circlenum){
+			oldnum = old;
 		}else {
-			++ index;
+			++ oldnum;
 		}
-		if(i == index)
+		if(i < threbinnum)
 		{
-			old[i] = bin;
+			*oldnum = bin;
 		}
 
 		if (bin > blthre)
 		{
-			i = wunit;
+			i = wunit -1;
 			errortype = 1;
 			cout << "error: " << n + 1 << " on " << bin << endl;
 		}else if (peindex == 1){
@@ -96,7 +106,7 @@ void highthist::LoadDecaytime(const string filename)
 						{
 							errortype = 2;
 							tmpi = i;
-							i = wunit;
+							i = wunit-1;
 							cout << "out of peak error: " << n + 1 << " on " << bin << endl;
 						}	
 					}
@@ -104,15 +114,16 @@ void highthist::LoadDecaytime(const string filename)
 			}
 		}else
 		{
-			if (old[index] - bin  > thre){
+			if (*oldnum - bin  > thre){
 				++ size;
 				peindex = 1;
 				peak = bin;
 				peaknum[size-1] = i;
 			}
 		}
-		old[index] = bin;
+		*oldnum = bin;
 
+		++i;
 		if (i == wunit)
 		{
 			++ n;
@@ -120,7 +131,6 @@ void highthist::LoadDecaytime(const string filename)
 				this->AddBinContent((- peaknum[zerosize-1] + peaknum[zerosize]) /binlen);
 			}
 
-			index = 0;
 			peindex = 0;
 			size = 0;
 			zerosize = 0;
@@ -141,7 +151,8 @@ void highthist::LoadDecaytime(const string filename)
 			}
 		}
 	}
-	ifs.close();
+	fclose(f);
+	// ifs.close();
 	delete[] peaknum;
 	delete[] old;
 }
