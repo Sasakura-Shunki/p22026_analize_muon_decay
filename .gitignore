@@ -1,12 +1,12 @@
+*
+!*.*
+!Makefile
 *.root
-makehist
-decayhist
 /graph/
 *.tar*
 *.jpg
 *.swp
 *.o
 *.gch
-draw_graph
 *.txt
 /.vscode/
