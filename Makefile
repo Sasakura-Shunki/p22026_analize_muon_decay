@@ -1,4 +1,5 @@
-TARGET = draw_graph makehist decayhist
+TARGET = draw_graph makehist decayhist decayhist_nogui
+NOHEADTAR = detlen
 
 CLASS = func.o
 HEADER = makehist.hpp
@@ -12,14 +13,21 @@ CXXLIBS    = $(ROOTLIBS)
 CC = g++ 
 
 .PHONY: all
-all: $(TARGET)
+all: $(TARGET) $(NOHEADTAR)
 
 define DEFF_TARGET_COMP
 $(1): $(1).o $(CLASS)
 	$$(CC) $$^ $$(CXXLIBS) $$(CXXFLAGS) -o $$@
 endef
 
+# NOHEAD rule
+define DEFF_NOHEADTARGET_COMP
+$(1): $(1).cxx
+	$$(CC) $$^ $$(CXXLIBS) $$(CXXFLAGS) -o $$@
+endef
+
 $(foreach t,$(TARGET),$(eval $(call DEFF_TARGET_COMP,$(t))))
+$(foreach t,$(NOHEADTAR),$(eval $(call DEFF_NOHEADTARGET_COMP,$(t))))
 
 # suffix rule
 %.o:%.cpp $(HEADER)
