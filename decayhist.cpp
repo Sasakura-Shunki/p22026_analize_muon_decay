@@ -4,7 +4,7 @@
 int main(int argc, char** argv)
 {
 	int xmax = 1500;
-	int binlen = 50;
+	int binlen = 1;
 	short thre = 80;
 	short threibnnum=6;
 	float wavedump =0.9;

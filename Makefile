@@ -33,6 +33,10 @@ $(foreach t,$(NOHEADTAR),$(eval $(call DEFF_NOHEADTARGET_COMP,$(t))))
 %.o:%.cpp $(HEADER)
 	$(CC) $(CXXFLAGS) -c $<
 
+.PHONY: forbinlen
+forbinlen: CLASS = binfunc.o
+forbinlen: all
+
 .PHONY: debug
 debug: CXXFLAGS = $(ROOTCFLAGS) -O0 -g
 debug: all
