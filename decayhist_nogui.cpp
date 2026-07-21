@@ -4,7 +4,7 @@
 int main(int argc, char** argv)
 {
 	int xmax = 1500;
-	int binlen = 1;
+	int binlen = 50;
 	short thre = 80;
 	short threibnnum=6;
 	float wavedump =0.9;
@@ -22,8 +22,6 @@ int main(int argc, char** argv)
 	}
 	const char *title = "muon decay time; time(ns); Count";
 
-	TApplication app("app", &argc, argv );
-	auto c = new TCanvas("c","c");
 	highthist *th1 = new highthist("h1", title, xmax /binlen, 0, xmax*4);
 	th1->Setparam(1500, binlen, 100, xmax/binlen);
 	th1->thre= thre;
@@ -42,17 +40,9 @@ int main(int argc, char** argv)
 	}
 	ifs.close();
 
-	th1->Draw();
-
-	//app.Run();
-	c->WaitPrimitive();
-	const char *outf = "graph.jpg";
-
 	auto file = new TFile("decay_hist.root", "RECREATE");
-	// auto file = new TFile("test.root", "RECREATE");
-
-	c->Print(outf);
-	file->WriteObject(th1, "th1");
+	th1->Write("th1");
+	file->Write();
 
 	return 0;
 }
