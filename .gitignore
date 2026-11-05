@@ -1,6 +1,5 @@
 *
 !*.*
-!Makefile
 *.root
 /graph/
 *.tar*
@@ -10,3 +9,6 @@
 *.gch
 *.txt
 /.vscode/
+
+!Makefile
+!CMakeLists.txt
