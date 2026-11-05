@@ -1,12 +1,16 @@
 cmake_minimum_required(VERSION 3.20)
-project(decayhist)
+project(analisis_mu)
 
 set(CMAKE_CXX_STANDARD 17)
+set(TARGET draw_graph makehist decayhist decayhist_nogui)
 
 find_package(ROOT REQUIRED)
 
 add_library(func func.cpp)
-target_link_libraries(func ROOT::Core ${ROOT_LIBRARIES})
+set(ROOT_LINK ROOT::Core ${ROOT_LIBRARIES})
+target_link_libraries(func ${ROOT_LINK})
 
-add_executable(Main decayhist_nogui.cpp)
-target_link_libraries(Main func ROOT::Core ${ROOT_LIBRARIES})
+foreach(EXE IN LISTS TARGET)
+	add_executable(${EXE} ${EXE}.cpp)
+	target_link_libraries(${EXE} func ${ROOT_LINK})
+endforeach()

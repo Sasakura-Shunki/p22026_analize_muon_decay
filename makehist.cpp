@@ -1,4 +1,5 @@
 #include "makehist.hpp"
+#include <fstream>
 
 int main(int argc, char** argv)
 {
@@ -8,7 +9,6 @@ int main(int argc, char** argv)
 	if (argc == 2){
 		binlen= stoi(argv[1]);
 	}
-	string filename;
 	const char *title = "muon intsensity; Energy; Count";
 
 	TApplication app("app", &argc, argv );
@@ -18,11 +18,18 @@ int main(int argc, char** argv)
 	highthist *th1 = new highthist("h1", title, xmax /binlen, 0, xmax);
 	th1->Setparam(wunit, binlen, 100, xmax);
 
-	filename = "data/wave0.txt";
-	// filename = "test.txt";
 	const char *outf = "graph.jpg";
-
-	th1->Loadhight(filename);
+	string datalist;
+	datalist = "datalist.txt";
+	ifstream ifs(datalist);
+	string filename;
+	while (getline(ifs, filename)) {
+		if(filename.substr(0,2) != "//"){
+			cout << "current file: " << filename << endl;
+			th1->Loadhight(filename);
+		}
+	}
+	ifs.close();
 
 	th1->Draw();
 	c->Print(outf);

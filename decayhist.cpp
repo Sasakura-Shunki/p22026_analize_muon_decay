@@ -36,8 +36,8 @@ int main(int argc, char** argv)
 	string filename;
 	while (getline(ifs, filename)) {
 		if(filename.substr(0,2) != "//"){
-		th1->LoadDecaytime(filename);
-		cout << "current number of events (" << filename << "):\t" << th1->Integral() <<endl;
+			th1->LoadDecaytime(filename);
+			cout << "current number of events (" << filename << "):\t" << th1->Integral() <<endl;
 		}
 	}
 	ifs.close();

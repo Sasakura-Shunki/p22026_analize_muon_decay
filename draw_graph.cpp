@@ -1,4 +1,5 @@
 #include "makehist.hpp"
+#include <fstream>
 
 int main(int argc, char* argv[])
 {
@@ -30,11 +31,17 @@ int main(int argc, char* argv[])
 	th1->SetStats(0);
 	th1->wavedump= wavedump;
 
+	string datalist;
+	datalist = "datalist.txt";
+	ifstream ifs(datalist);
 	string filename;
-	filename = "data/wave0.txt";
-	// filename = "test.txt";
-
-	th1->DrawDecay(filename, *c);
+	while (getline(ifs, filename)) {
+		if(filename.substr(0,2) != "//"){
+			cout << "current file: " << filename << endl;
+			th1->DrawDecay(filename, *c);
+		}
+	}
+	ifs.close();
 
 	return 0;
 }
